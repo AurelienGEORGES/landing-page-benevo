@@ -30,7 +30,7 @@ export default function Navbar() {
               gap: '10px',
               textDecoration: 'none'
             }}>
-              <img src="/assets/image.png" alt="Logo BNEVO" style={{
+              <img src="../assets/image.png" alt="Logo BNEVO" style={{
                 width: '50px',
                 height: 'auto'
               }} />
@@ -40,7 +40,7 @@ export default function Navbar() {
                 color: '#079669',
                 margin: 0
               }}>
-                BNEVO
+                BENEVO
               </p>
             </a>
           </div>
