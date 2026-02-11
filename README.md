@@ -1,1 +1,2 @@
-# landing-page-benevo
+# React + Vite
+landing app de notre application BeNevo
