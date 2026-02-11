@@ -2,26 +2,75 @@ import React from 'react';
 
 export default function Navbar() {
   return (
-    <nav className="sticky top-0 z-50 bg-white shadow-custom">
+    <nav style={{
+      position: 'sticky',
+      top: 0,
+      zIndex: 50,
+      background: 'white',
+      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+      borderBottom: '1px solid #f0f0f0'
+    }}>
       <div className="container">
-        <div className="flex justify-between items-center h-16">
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          height: '70px',
+          padding: '0 20px'
+        }}>
           {/* Logo */}
-          <div className="flex items-center gap-3">
-            <a href="#hero-section" className="flex items-center gap-2">
-              <img src="/assets/image.png" alt="Logo Benevo" className="w-12 h-auto" />
-              <p className="font-bold text-lg text-primary-green">Benevo</p>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px'
+          }}>
+            <a href="#hero-section" style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              textDecoration: 'none'
+            }}>
+              <img src="/assets/image.png" alt="Logo BNEVO" style={{
+                width: '50px',
+                height: 'auto'
+              }} />
+              <p style={{
+                fontWeight: '700',
+                fontSize: '1.3rem',
+                color: '#079669',
+                margin: 0
+              }}>
+                BNEVO
+              </p>
             </a>
           </div>
 
           {/* Nav Links */}
-          <ul className="hidden md:flex items-center gap-8">
+          <ul style={{
+            display: 'none',
+            alignItems: 'center',
+            gap: '30px',
+            listStyle: 'none',
+            margin: 0,
+            padding: 0
+          }} className="nav-links-desktop">
             <li>
-              <a href="#solution" className="text-text-dark hover:text-primary-green font-medium transition">
+              <a href="#solution" style={{
+                color: '#181818',
+                fontWeight: '500',
+                textDecoration: 'none',
+                transition: 'color 0.3s ease'
+              }} onMouseEnter={(e) => e.target.style.color = '#079669'} onMouseLeave={(e) => e.target.style.color = '#181818'}>
                 Notre Solution Digitale
               </a>
             </li>
             <li>
-              <a href="#pricing" className="text-text-dark hover:text-primary-green font-medium transition">
+              <a href="#pricing" style={{
+                color: '#181818',
+                fontWeight: '500',
+                textDecoration: 'none',
+                transition: 'color 0.3s ease'
+              }} onMouseEnter={(e) => e.target.style.color = '#079669'} onMouseLeave={(e) => e.target.style.color = '#181818'}>
                 Tarif
               </a>
             </li>
@@ -30,10 +79,26 @@ export default function Navbar() {
           {/* CTA Button */}
           <a
             href="#contact"
-            className="btn btn-border hidden md:flex"
+            className="btn btn-border"
+            style={{
+              display: 'none',
+              textDecoration: 'none',
+              width: 'auto'
+            }}
           >
-            Essayer l&apos;application
+            Essayer l'application
           </a>
+
+          <style>{`
+            @media (min-width: 768px) {
+              .nav-links-desktop {
+                display: flex !important;
+              }
+              a.btn {
+                display: inline-flex !important;
+              }
+            }
+          `}</style>
         </div>
       </div>
     </nav>

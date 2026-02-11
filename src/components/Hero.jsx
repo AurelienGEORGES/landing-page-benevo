@@ -13,20 +13,46 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative bg-white text-text-dark py-20 min-h-screen flex flex-col justify-center">
+    <section id="hero-section" style={{
+      background: '#FFFFFF',
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: '40px 20px',
+      marginTop: '80px'
+    }}>
       <div className="container">
         {/* Hero Content */}
-        <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl font-bold leading-tight mb-8 font-nunito">
+        <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+          <h1 style={{
+            fontSize: 'clamp(2rem, 8vw, 3.5rem)',
+            lineHeight: '1.2',
+            marginBottom: '30px',
+            fontFamily: '"Nunito", sans-serif',
+            fontWeight: '600',
+            color: '#181818'
+          }}>
             Retrouvez le plaisir
             <br />
-            <span className="text-primary-green min-h-[1.2em] inline-block">
+            <span style={{
+              color: '#079669',
+              minHeight: '1.2em',
+              display: 'inline-block',
+              transition: 'opacity 0.5s ease'
+            }}>
               {words[currentWord]}
             </span>
           </h1>
-          <div className="flex justify-center gap-4">
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: '15px',
+            flexWrap: 'wrap'
+          }}>
             <a
-              href="#contact"
+              href="#demo"
               className="btn btn-primary"
             >
               Démonstration vidéo
@@ -34,37 +60,93 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* iPhone Mockup */}
-        <div className="relative h-[600px] flex justify-center items-center">
+        {/* iPhone Mockup with Overlay Images */}
+        <div style={{
+          position: 'relative',
+          height: 'clamp(400px, 80vh, 700px)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginBottom: '40px'
+        }}>
+          {/* iPhone Base */}
           <img
             src="/assets/LEAN-iPhone_Mockup_Hero_modifie.png"
             alt="iPhone BNEVO"
-            className="h-full object-contain z-10"
+            style={{
+              height: '100%',
+              objectFit: 'contain',
+              zIndex: 10,
+              maxWidth: '100%'
+            }}
           />
-          {/* Overlay Images */}
+          
+          {/* Overlay Images - Left positions */}
           <img
             src="/assets/image_1_scroll.png"
             alt="Étape 1"
-            className="absolute left-0 top-1/4 w-64 h-auto opacity-80 hover:opacity-100 transition"
-            id="img-1"
-          />
-          <img
-            src="/assets/image_2_scroll.png"
-            alt="Étape 2"
-            className="absolute right-0 top-1/3 w-64 h-auto opacity-80 hover:opacity-100 transition"
-            id="img-2"
+            style={{
+              position: 'absolute',
+              left: '-200px',
+              top: '25%',
+              width: '250px',
+              height: 'auto',
+              opacity: 0.8,
+              transition: 'opacity 0.3s ease'
+            }}
+            className="overlay-img"
+            onMouseEnter={(e) => e.target.style.opacity = '1'}
+            onMouseLeave={(e) => e.target.style.opacity = '0.8'}
           />
           <img
             src="/assets/image_3_scroll.png"
             alt="Étape 3"
-            className="absolute left-12 bottom-1/4 w-64 h-auto opacity-80 hover:opacity-100 transition"
-            id="img-3"
+            style={{
+              position: 'absolute',
+              left: '-180px',
+              bottom: '20%',
+              width: '250px',
+              height: 'auto',
+              opacity: 0.8,
+              transition: 'opacity 0.3s ease'
+            }}
+            className="overlay-img"
+            onMouseEnter={(e) => e.target.style.opacity = '1'}
+            onMouseLeave={(e) => e.target.style.opacity = '0.8'}
+          />
+          
+          {/* Right positions */}
+          <img
+            src="/assets/image_2_scroll.png"
+            alt="Étape 2"
+            style={{
+              position: 'absolute',
+              right: '-200px',
+              top: '30%',
+              width: '250px',
+              height: 'auto',
+              opacity: 0.8,
+              transition: 'opacity 0.3s ease'
+            }}
+            className="overlay-img"
+            onMouseEnter={(e) => e.target.style.opacity = '1'}
+            onMouseLeave={(e) => e.target.style.opacity = '0.8'}
           />
           <img
             src="/assets/image_4_scroll.png"
             alt="Étape 4"
-            className="absolute right-12 bottom-1/3 w-64 h-auto opacity-80 hover:opacity-100 transition"
-            id="img-4"
+            style={{
+              position: 'absolute',
+              right: '-180px',
+              bottom: '25%',
+              width: '250px',
+              height: 'auto',
+              opacity: 0.8,
+              transition: 'opacity 0.3s ease'
+            }}
+            className="overlay-img"
+            onMouseEnter={(e) => e.target.style.opacity = '1'}
+            onMouseLeave={(e) => e.target.style.opacity = '0.8'}
           />
         </div>
       </div>

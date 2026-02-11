@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 
 export default function VideoSection() {
   const videoRef = useRef(null);
+  const videoContainerRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState('0:00');
   const [duration, setDuration] = useState('0:00');
@@ -59,101 +60,212 @@ export default function VideoSection() {
   };
 
   const toggleFullscreen = () => {
-    if (videoRef.current?.parentElement) {
-      videoRef.current.parentElement.requestFullscreen().catch(() => {
-        // Fallback if fullscreen not supported
-      });
+    if (videoContainerRef.current) {
+      videoContainerRef.current.requestFullscreen?.().catch(() => {});
     }
   };
 
   return (
-    <section id="demo" className="py-20 bg-white">
+    <section id="demo" style={{
+      background: '#FFFFFF',
+      padding: '80px 20px'
+    }}>
       <div className="container">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+          gap: '60px',
+          alignItems: 'center'
+        }}>
           {/* Text Content */}
           <div>
-            <h2 className="text-4xl font-nunito font-semibold text-text-dark mb-6">
+            <h2 style={{
+              fontSize: '2.5rem',
+              fontFamily: '"Nunito", sans-serif',
+              fontWeight: '600',
+              color: '#181818',
+              marginBottom: '20px'
+            }}>
               Voyez la simplicité en action
             </h2>
-            <p className="text-lg text-gray-600 leading-relaxed mb-8">
+            <p style={{
+              fontSize: '1.1rem',
+              color: '#666',
+              lineHeight: '1.8',
+              marginBottom: '30px'
+            }}>
               Découvrez comment nous transformons des heures de gestion administrative en
-              quelques clics sereins. Nous remettons l&apos;humain au centre, et la technique au
-              placard.
+              quelques clics sereins. Nous remettons l'humain au centre, et la technique au placard.
             </p>
-            <button className="btn btn-primary">Demander une démo</button>
+            <button className="btn btn-primary">
+              Demander une démo
+            </button>
           </div>
 
           {/* Video Player */}
-          <div className="relative">
-            <div className="relative bg-black rounded-custom overflow-hidden shadow-custom" ref={videoRef?.parentElement}>
-              <video
-                ref={videoRef}
-                src="/assets/LEAN-Publicité 1.mp4"
-                className="w-full h-auto"
-                onTimeUpdate={handleTimeUpdate}
-                onLoadedMetadata={handleTimeUpdate}
-              />
+          <div ref={videoContainerRef} style={{
+            position: 'relative',
+            background: 'black',
+            borderRadius: '12px',
+            overflow: 'hidden',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)'
+          }}>
+            <video
+              ref={videoRef}
+              src="/assets/LEAN-Publicité 1.mp4"
+              style={{
+                width: '100%',
+                height: 'auto',
+                display: 'block'
+              }}
+              onTimeUpdate={handleTimeUpdate}
+              onLoadedMetadata={handleTimeUpdate}
+            />
 
-              {/* Play Button Overlay */}
-              {!isPlaying && (
-                <div
-                  className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 hover:bg-opacity-50 transition cursor-pointer"
+            {/* Play Button Overlay */}
+            {!isPlaying && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: 'rgba(0, 0, 0, 0.4)',
+                  cursor: 'pointer',
+                  transition: 'background 0.3s ease'
+                }}
+                onClick={togglePlay}
+                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0, 0, 0, 0.6)'}
+                onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(0, 0, 0, 0.4)'}
+              >
+                <div style={{
+                  fontSize: '60px',
+                  color: 'white',
+                  textShadow: '0 2px 10px rgba(0, 0, 0, 0.5)'
+                }}>
+                  ▶
+                </div>
+              </div>
+            )}
+
+            {/* Video Controls */}
+            <div style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              background: 'linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent)',
+              padding: '20px',
+              color: 'white'
+            }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                fontSize: '14px'
+              }}>
+                <button
                   onClick={togglePlay}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    border: 'none',
+                    color: 'white',
+                    padding: '8px 12px',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    transition: 'background 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.3)'}
+                  onMouseLeave={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.2)'}
+                  title="Play/Pause"
                 >
-                  <div className="text-white text-6xl">▶</div>
+                  {isPlaying ? '⏸' : '▶'}
+                </button>
+
+                <button
+                  onClick={restart}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    border: 'none',
+                    color: 'white',
+                    padding: '8px 12px',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    transition: 'background 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.3)'}
+                  onMouseLeave={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.2)'}
+                  title="Restart"
+                >
+                  ↻
+                </button>
+
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}>
+                  <button
+                    onClick={toggleMute}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      border: 'none',
+                      color: 'white',
+                      padding: '8px 12px',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      transition: 'background 0.2s'
+                    }}
+                    onMouseEnter={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.3)'}
+                    onMouseLeave={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.2)'}
+                    title={isMuted ? 'Unmute' : 'Mute'}
+                  >
+                    {isMuted ? '🔇' : '🔊'}
+                  </button>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.1"
+                    value={volume}
+                    onChange={handleVolumeChange}
+                    style={{
+                      width: '80px',
+                      height: '4px',
+                      cursor: 'pointer'
+                    }}
+                  />
                 </div>
-              )}
 
-              {/* Video Controls */}
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
-                <div className="flex items-center gap-2 text-white text-sm md:text-base">
-                  <button
-                    onClick={togglePlay}
-                    className="p-2 hover:bg-white hover:bg-opacity-20 rounded-lg transition"
-                    title="Play/Pause"
-                  >
-                    {isPlaying ? '⏸' : '▶'}
-                  </button>
+                <span style={{
+                  marginLeft: 'auto',
+                  whiteSpace: 'nowrap',
+                  fontSize: '12px'
+                }}>
+                  {currentTime} / {duration}
+                </span>
 
-                  <button
-                    onClick={restart}
-                    className="p-2 hover:bg-white hover:bg-opacity-20 rounded-lg transition"
-                    title="Restart"
-                  >
-                    ↻
-                  </button>
-
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={toggleMute}
-                      className="p-2 hover:bg-white hover:bg-opacity-20 rounded-lg transition"
-                      title={isMuted ? 'Unmute' : 'Mute'}
-                    >
-                      {isMuted ? '🔇' : '🔊'}
-                    </button>
-                    <input
-                      type="range"
-                      min="0"
-                      max="1"
-                      step="0.1"
-                      value={volume}
-                      onChange={handleVolumeChange}
-                      className="w-16 md:w-20 h-1.5 bg-white bg-opacity-30 rounded-full accent-primary-green cursor-pointer"
-                    />
-                  </div>
-
-                  <span className="text-xs md:text-sm ml-auto whitespace-nowrap">
-                    {currentTime} / {duration}
-                  </span>
-
-                  <button
-                    onClick={toggleFullscreen}
-                    className="p-2 hover:bg-white hover:bg-opacity-20 rounded-lg transition"
-                    title="Fullscreen"
-                  >
-                    ⛶
-                  </button>
-                </div>
+                <button
+                  onClick={toggleFullscreen}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    border: 'none',
+                    color: 'white',
+                    padding: '8px 12px',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    transition: 'background 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.3)'}
+                  onMouseLeave={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.2)'}
+                  title="Fullscreen"
+                >
+                  ⛶
+                </button>
               </div>
             </div>
           </div>

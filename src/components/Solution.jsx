@@ -19,55 +19,159 @@ export default function Solution() {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   return (
-    <section id="solution" className="py-20 bg-gray-50">
+    <section id="solution" style={{
+      background: '#f5f5f5',
+      padding: '80px 20px'
+    }}>
       <div className="container">
         {/* Section Header */}
         <div className="section-header">
-          <h2>L&apos;essentiel, rien que l&apos;essentiel</h2>
-          <p>Nous avons supprimé le superflu pour garder ce qui vous aide vraiment.</p>
+          <h2 style={{
+            fontSize: '2.5rem',
+            fontFamily: '"Nunito", sans-serif',
+            fontWeight: '600',
+            color: '#181818',
+            marginBottom: '20px'
+          }}>
+            L'essentiel, rien que l'essentiel
+          </h2>
+          <p style={{
+            fontSize: '1.1rem',
+            color: '#666',
+            marginBottom: '40px'
+          }}>
+            Nous avons supprimé le superflu pour garder ce qui vous aide vraiment.
+          </p>
         </div>
 
-        {/* Slider */}
-        <div className="bg-white rounded-custom shadow-custom p-12 md:p-20">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Slide Content */}
+        {/* Slider Container */}
+        <div style={{
+          background: '#FFFFFF',
+          borderRadius: '20px',
+          padding: '60px 40px',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)'
+        }}>
+          {/* Slide Content */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '50px',
+            alignItems: 'center',
+            minHeight: '500px'
+          }}>
+            {/* Text Section */}
             <div>
-              <span className="badge">
+              <span style={{
+                display: 'inline-block',
+                background: '#079669',
+                color: 'white',
+                padding: '5px 15px',
+                borderRadius: '20px',
+                fontSize: '0.9rem',
+                fontWeight: '700',
+                textTransform: 'uppercase',
+                marginBottom: '15px'
+              }}>
                 {slides[currentSlide].badge}
               </span>
-              <h3 className="text-3xl font-bold text-text-dark mb-6">{slides[currentSlide].title}</h3>
-              <p className="text-lg text-gray-600 leading-relaxed mb-8">
+              
+              <h3 style={{
+                fontSize: '2rem',
+                fontFamily: '"Nunito", sans-serif',
+                fontWeight: '600',
+                color: '#181818',
+                marginBottom: '20px'
+              }}>
+                {slides[currentSlide].title}
+              </h3>
+              
+              <p style={{
+                fontSize: '1rem',
+                color: '#666',
+                lineHeight: '1.8',
+                marginBottom: '30px'
+              }}>
                 {slides[currentSlide].description}
               </p>
 
               {/* Slider Controls */}
-              <div className="flex gap-4">
+              <div style={{
+                display: 'flex',
+                gap: '15px'
+              }}>
                 <button
                   onClick={() => setCurrentSlide(0)}
-                  className={`slider-btn ${currentSlide === 0 ? 'active' : ''}`}
+                  style={{
+                    padding: '10px 20px',
+                    borderRadius: '50px',
+                    border: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    background: currentSlide === 0 ? '#079669' : '#e5e7eb',
+                    color: currentSlide === 0 ? 'white' : '#181818'
+                  }}
                 >
                   Côté Organisateur
                 </button>
                 <button
                   onClick={() => setCurrentSlide(1)}
-                  className={`slider-btn ${currentSlide === 1 ? 'active' : ''}`}
+                  style={{
+                    padding: '10px 20px',
+                    borderRadius: '50px',
+                    border: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    background: currentSlide === 1 ? '#079669' : '#e5e7eb',
+                    color: currentSlide === 1 ? 'white' : '#181818'
+                  }}
                 >
                   Côté Bénévole
                 </button>
               </div>
             </div>
 
-            {/* Slide Image */}
-            <div className="flex justify-center">
+            {/* Image Section */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}>
               <img
+                key={currentSlide}
                 src={slides[currentSlide].image}
                 alt={slides[currentSlide].title}
-                className="h-[500px] object-contain rounded-custom shadow-custom"
+                style={{
+                  height: '500px',
+                  width: 'auto',
+                  objectFit: 'contain',
+                  animation: 'fadeIn 0.5s ease'
+                }}
               />
             </div>
           </div>
         </div>
       </div>
+
+      <style>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        @media (max-width: 768px) {
+          [style*="gridTemplateColumns: '1fr 1fr'"] {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

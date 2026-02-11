@@ -3,33 +3,27 @@ import React, { useState, useRef } from 'react';
 const galleryImages = [
   {
     id: 1,
-    title: 'Tableau de bord',
-    url: 'https://via.placeholder.com/400x300?text=Dashboard',
+    title: 'Vue Statistiques',
+    url: '/assets/Capture d\'écran 2025-12-11 131550.png',
+    width: '450px'
   },
   {
     id: 2,
     title: 'Gestion événements',
-    url: 'https://via.placeholder.com/400x300?text=Events',
+    url: '/assets/Capture d\'écran 2025-12-11 131642.png',
+    width: '450px'
   },
   {
     id: 3,
-    title: 'Assignation bénévoles',
-    url: 'https://via.placeholder.com/400x300?text=Volunteers',
+    title: 'Planification',
+    url: '/assets/Capture d\'écran 2025-12-11 131852.png',
+    width: '530px'
   },
   {
     id: 4,
-    title: 'Rapports & analytics',
-    url: 'https://via.placeholder.com/400x300?text=Analytics',
-  },
-  {
-    id: 5,
-    title: 'Gestion des stocks',
-    url: 'https://via.placeholder.com/400x300?text=Inventory',
-  },
-  {
-    id: 6,
-    title: 'Notifications',
-    url: 'https://via.placeholder.com/400x300?text=Notifications',
+    title: 'Dashboard complet',
+    url: '/assets/Capture d\'écran 2025-12-11 131958.png',
+    width: '750px'
   },
 ];
 
@@ -39,94 +33,200 @@ export default function Gallery() {
 
   const handlePrev = () => {
     setCurrentIndex((prev) => (prev === 0 ? galleryImages.length - 1 : prev - 1));
-    scrollToItem(currentIndex - 1 < 0 ? galleryImages.length - 1 : currentIndex - 1);
   };
 
   const handleNext = () => {
     setCurrentIndex((prev) => (prev === galleryImages.length - 1 ? 0 : prev + 1));
-    scrollToItem(currentIndex + 1 >= galleryImages.length ? 0 : currentIndex + 1);
   };
 
-  const scrollToItem = (index) => {
-    if (scrollContainerRef.current) {
-      const itemWidth = scrollContainerRef.current.children[0]?.offsetWidth || 0;
-      scrollContainerRef.current.scrollLeft = itemWidth * index;
-    }
+  const handleIndicatorClick = (index) => {
+    setCurrentIndex(index);
   };
 
   return (
-    <section id="gallery" className="py-20 bg-white">
+    <section id="galerie" style={{
+      background: '#FFFFFF',
+      padding: '80px 20px'
+    }}>
       <div className="container">
         {/* Section Header */}
         <div className="section-header">
-          <h2>Explorez chaque fonctionnalité</h2>
-          <p>Un aperçu complet de la plateforme BNEVO en images</p>
+          <h2 style={{
+            fontSize: '2.5rem',
+            fontFamily: '"Nunito", sans-serif',
+            fontWeight: '600',
+            color: '#181818',
+            marginBottom: '20px'
+          }}>
+            L'application en images
+          </h2>
+          <p style={{
+            fontSize: '1.1rem',
+            color: '#666',
+            marginBottom: '60px'
+          }}>
+            Découvrez l'interface intuitive de BNEVO
+          </p>
         </div>
 
         {/* Gallery Container */}
-        <div className="relative">
-          {/* Scroll Container */}
-          <div
-            ref={scrollContainerRef}
-            className="flex overflow-x-auto gap-6 scroll-smooth snap-x snap-mandatory pb-4"
-            style={{ scrollBehavior: 'smooth' }}
-          >
-            {galleryImages.map((image) => (
-              <div
-                key={image.id}
-                className="flex-shrink-0 w-full md:w-1/2 lg:w-1/3 snap-center"
-              >
-                <div className="bg-gray-100 rounded-custom overflow-hidden shadow-custom hover:shadow-lg transition-shadow duration-300">
-                  <img
-                    src={image.url}
-                    alt={image.title}
-                    className="w-full h-64 object-cover"
-                  />
-                  <div className="p-6 bg-white">
-                    <h3 className="text-lg font-semibold text-text-dark">{image.title}</h3>
-                  </div>
-                </div>
-              </div>
+        <div style={{
+          position: 'relative'
+        }}>
+          {/* Gallery Track */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            position: 'relative'
+          }}>
+            {/* Navigation Buttons */}
+            <button
+              onClick={handlePrev}
+              style={{
+                position: 'absolute',
+                left: '-60px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: '#079669',
+                color: 'white',
+                border: 'none',
+                width: '50px',
+                height: '50px',
+                borderRadius: '50%',
+                fontSize: '24px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 0.3s ease',
+                zIndex: 10
+              }}
+              className="gallery-prev"
+              onMouseEnter={(e) => {
+                e.target.style.background = '#9EFEB3';
+                e.target.style.color = '#181818';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.background = '#079669';
+                e.target.style.color = 'white';
+              }}
+              aria-label="Previous"
+            >
+              ‹
+            </button>
+
+            {/* Image Display */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              minHeight: '600px',
+              width: '100%',
+              maxWidth: '900px'
+            }}>
+              <img
+                key={currentIndex}
+                src={galleryImages[currentIndex].url}
+                alt={galleryImages[currentIndex].title}
+                style={{
+                  width: galleryImages[currentIndex].width || 'auto',
+                  height: 'auto',
+                  maxWidth: '100%',
+                  borderRadius: '12px',
+                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+                  animation: 'fadeIn 0.5s ease'
+                }}
+              />
+            </div>
+
+            <button
+              onClick={handleNext}
+              style={{
+                position: 'absolute',
+                right: '-60px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: '#079669',
+                color: 'white',
+                border: 'none',
+                width: '50px',
+                height: '50px',
+                borderRadius: '50%',
+                fontSize: '24px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 0.3s ease',
+                zIndex: 10
+              }}
+              className="gallery-next"
+              onMouseEnter={(e) => {
+                e.target.style.background = '#9EFEB3';
+                e.target.style.color = '#181818';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.background = '#079669';
+                e.target.style.color = 'white';
+              }}
+              aria-label="Next"
+            >
+              ›
+            </button>
+          </div>
+
+          {/* Indicators */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: '12px',
+            marginTop: '40px'
+          }}>
+            {galleryImages.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => handleIndicatorClick(index)}
+                style={{
+                  width: index === currentIndex ? '32px' : '12px',
+                  height: '12px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  background: index === currentIndex ? '#079669' : '#ccc',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+                aria-label={`Go to slide ${index + 1}`}
+              />
             ))}
           </div>
 
-          {/* Navigation Buttons */}
-          <button
-            onClick={handlePrev}
-            className="absolute left-0 top-1/3 -translate-y-1/2 -translate-x-6 md:-translate-x-16 z-10 w-12 h-12 rounded-full bg-primary-green text-white flex items-center justify-center hover:bg-secondary-green hover:text-text-dark transition-all duration-300 shadow-custom"
-            aria-label="Previous"
-          >
-            ‹
-          </button>
-
-          <button
-            onClick={handleNext}
-            className="absolute right-0 top-1/3 -translate-y-1/2 translate-x-6 md:translate-x-16 z-10 w-12 h-12 rounded-full bg-primary-green text-white flex items-center justify-center hover:bg-secondary-green hover:text-text-dark transition-all duration-300 shadow-custom"
-            aria-label="Next"
-          >
-            ›
-          </button>
-        </div>
-
-        {/* Indicators */}
-        <div className="flex justify-center gap-2 mt-8">
-          {galleryImages.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => {
-                setCurrentIndex(index);
-                scrollToItem(index);
-              }}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                index === currentIndex
-                  ? 'bg-primary-green w-8'
-                  : 'bg-gray-300 hover:bg-gray-400'
-              }`}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
+          {/* Title/Description */}
+          <div style={{
+            textAlign: 'center',
+            marginTop: '30px'
+          }}>
+            <p style={{
+              fontSize: '1.1rem',
+              color: '#181818',
+              fontWeight: '500'
+            }}>
+              {galleryImages[currentIndex].title}
+            </p>
+          </div>
         </div>
       </div>
+
+      <style>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+      `}</style>
     </section>
   );
 }
