@@ -71,7 +71,7 @@ export default function Hero() {
         }}>
           {/* iPhone Base */}
           <img
-            src="top/Images/assets/LEAN-iPhone_Mockup_Hero_modifie.png"
+            src="top/Images/LEAN-iPhone_Mockup_Hero_modifie.png"
             alt="iPhone BNEVO"
             style={{
               height: '100%',
