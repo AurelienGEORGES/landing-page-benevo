@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const words = ['d\'organiser', 'de planifier', 'de déléguer'];
+const words = ['D\'Organiser', 'De Planifier', 'De Déléguer'];
 
 export default function Hero() {
   const [currentWord, setCurrentWord] = useState(0);
