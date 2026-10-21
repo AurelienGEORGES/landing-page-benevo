@@ -1,102 +1,55 @@
-import React from 'react';
+import { useEffect, useRef } from 'react'
 
 const advantages = [
   {
-    icon: '📊',
+    icon: 'ph-file-xls',
     title: 'Cauchemar des plannings',
-    description: 'Gérer les disponibilités sur des tableaux Excel interminables qui ne sont jamais à jour.',
+    text: 'Gérer les disponibilités sur des tableaux Excel interminables qui ne sont jamais à jour.',
   },
   {
-    icon: '✈️',
-    title: 'Les chaînes d\'emails',
-    description: 'Envoyer 50 mails pour une confirmation, et perdre l\'info importante dans le fil.',
+    icon: 'ph-paper-plane-tilt',
+    title: "Les chaînes d'emails",
+    text: "Envoyer 50 mails pour une confirmation, et perdre l'info importante dans le fil.",
   },
   {
-    icon: '⚙️',
+    icon: 'ph-plugs-connected',
     title: 'Trop complexe',
-    description: 'Les logiciels existants sont des "usines à gaz" trop chères pour votre structure.',
+    text: 'Les logiciels existants sont des "usines à gaz" trop chères pour votre structure.',
   },
-];
+]
 
 export default function Advantages() {
-  return (
-    <section id="avantages" style={{
-      background: '#FFFFFF',
-      padding: '80px 20px'
-    }}>
-      <div className="container">
-        {/* Section Header */}
-        <div className="section-header">
-          <h2 style={{
-            fontSize: '2.5rem',
-            fontFamily: '"Nunito", sans-serif',
-            fontWeight: '600',
-            color: '#181818',
-            marginBottom: '20px'
-          }}>
-            Vous vous reconnaissez ?
-          </h2>
-          <p style={{
-            fontSize: '1.1rem',
-            color: '#666',
-            marginBottom: '60px'
-          }}>
-            Nous savons que gérer une asso, c'est souvent gérer l'imprévu.
-          </p>
-        </div>
+  const gridRef = useRef(null)
 
-        {/* Advantages Grid */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: '30px'
-        }}>
-          {advantages.map((advantage, index) => (
-            <div
-              key={index}
-              style={{
-                padding: '30px',
-                border: '2px solid #9EFEB3',
-                borderRadius: '12px',
-                transition: 'all 0.3s ease',
-                cursor: 'pointer',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.02)'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-5px)';
-                e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.08)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.02)';
-              }}
-            >
-              <div style={{
-                fontSize: '3rem',
-                marginBottom: '20px'
-              }}>
-                {advantage.icon}
-              </div>
-              <h3 style={{
-                fontSize: '1.3rem',
-                fontFamily: '"Nunito", sans-serif',
-                fontWeight: '600',
-                color: '#181818',
-                marginBottom: '15px'
-              }}>
-                {advantage.title}
-              </h3>
-              <p style={{
-                fontSize: '0.95rem',
-                color: '#666',
-                lineHeight: '1.6'
-              }}>
-                {advantage.description}
-              </p>
+  useEffect(() => {
+    // Ajoute .is-visible quand 20% de la carte est visible
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) entry.target.classList.add('is-visible')
+      })
+    }, { threshold: 0.2 })
+
+    gridRef.current.querySelectorAll('.advantage-card').forEach((card) => observer.observe(card))
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <section id="avantages" className="section-advantages">
+      <div className="container">
+        <div className="section-header">
+          <h2>Vous vous reconnaissez ?</h2>
+          <p>Nous savons que gérer une asso, c'est souvent gérer l'imprévu.</p>
+        </div>
+        <div className="advantages-grid" ref={gridRef}>
+          {advantages.map(({ icon, title, text }) => (
+            <div className="advantage-card" key={title}>
+              <div className="advantage-icon"><i className={`${icon} ph-1x`}></i></div>
+              <h3>{title}</h3>
+              <p>{text}</p>
             </div>
           ))}
         </div>
       </div>
     </section>
-  );
+  )
 }

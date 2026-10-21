@@ -8,7 +8,6 @@ import FeaturesTable from './components/FeaturesTable'
 import Pricing from './components/Pricing'
 import FAQ from './components/FAQ'
 import Testimonials from './components/Testimonials'
-import CTA from './components/CTA'
 import Footer from './components/Footer'
 
 function App() {
@@ -24,7 +23,6 @@ function App() {
       <Pricing />
       <FAQ />
       <Testimonials />
-      <CTA />
       <Footer />
     </>
   )

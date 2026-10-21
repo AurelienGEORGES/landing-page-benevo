@@ -1,168 +1,66 @@
-import React, { useState } from 'react';
-
-const pricingPlans = [
-  {
-    name: 'Starter',
-    monthlyPrice: 29,
-    annualPrice: 290,
-    description: 'Parfait pour les petites associations',
-    features: [
-      'Jusqu\'à 50 bénévoles',
-      '10 événements par mois',
-      'Assignation basique',
-      'Support par email',
-      'Lien magique bénévoles',
-    ],
-    cta: 'Commencer',
-    highlighted: false,
-  },
-  {
-    name: 'Professionnel',
-    monthlyPrice: 79,
-    annualPrice: 790,
-    description: 'Pour les associations en croissance',
-    features: [
-      'Jusqu\'à 500 bénévoles',
-      'Événements illimités',
-      'Assignation intelligente',
-      'Support prioritaire',
-      'Templates d\'événements',
-      'Gestion des désistements',
-      'Lien magique bénévoles',
-      'Analytics détaillées',
-    ],
-    cta: 'Essayer gratuitement',
-    highlighted: true,
-  },
-  {
-    name: 'Entreprise',
-    monthlyPrice: 'Sur mesure',
-    annualPrice: 'Sur mesure',
-    description: 'Pour les besoins complexes',
-    features: [
-      'Bénévoles illimités',
-      'Intégration API',
-      'Gestion de projets',
-      'Support dédié 24/7',
-      'Tous les templates',
-      'White-label disponible',
-      'SLA garanti',
-      'Formation incluse',
-    ],
-    cta: 'Contacter les ventes',
-    highlighted: false,
-  },
-];
+import { useRef, useState } from 'react'
 
 export default function Pricing() {
-  const [isAnnual, setIsAnnual] = useState(false);
+  const [annual, setAnnual] = useState(false)
+  const premiumPriceRef = useRef(null)
+
+  const handleToggle = (e) => {
+    setAnnual(e.target.checked)
+
+    // Animation de "pop" sur le prix
+    const el = premiumPriceRef.current
+    el.style.transform = 'scale(1.1)'
+    setTimeout(() => { el.style.transform = 'scale(1)' }, 200)
+  }
 
   return (
-    <section id="pricing" className="py-20 bg-white">
+    <section id="pricing" className="section-pricing">
       <div className="container">
-        {/* Section Header */}
         <div className="section-header">
-          <h2>Tarifs simples et transparents</h2>
-          <p>Choisissez le plan adapté à votre association</p>
+          <h2>Un tarif simple, comme l'outil</h2>
+          <p>Essayez gratuitement, passez au niveau supérieur quand vous êtes prêt.</p>
+
+          <div className="pricing-toggle">
+            <span>Mensuel</span>
+            <label className="switch">
+              <input type="checkbox" id="pricing-checkbox" checked={annual} onChange={handleToggle} />
+              <span className="slider round"></span>
+            </label>
+            <span>Annuel <span className="save-badge">-16%</span></span>
+          </div>
         </div>
-
-        {/* Toggle Monthly/Annual */}
-        <div className="flex justify-center items-center gap-4 mb-12">
-          <span className={`text-lg font-semibold ${!isAnnual ? 'text-text-dark' : 'text-gray-500'}`}>
-            Mensuel
-          </span>
-          <button
-            onClick={() => setIsAnnual(!isAnnual)}
-            className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${
-              isAnnual ? 'bg-primary-green' : 'bg-gray-300'
-            }`}
-          >
-            <span
-              className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${
-                isAnnual ? 'translate-x-7' : 'translate-x-1'
-              }`}
-            />
-          </button>
-          <span className={`text-lg font-semibold ${isAnnual ? 'text-text-dark' : 'text-gray-500'}`}>
-            Annuel
-            {isAnnual && <span className="ml-2 text-sm badge">-17%</span>}
-          </span>
-        </div>
-
-        {/* Pricing Cards */}
-        <div className="grid md:grid-cols-3 gap-8">
-          {pricingPlans.map((plan, index) => (
-            <div
-              key={index}
-              className={`rounded-custom overflow-hidden transition-all duration-300 ${
-                plan.highlighted
-                  ? 'ring-2 ring-primary-green shadow-custom scale-105 bg-white'
-                  : 'border-2 border-gray-200 shadow-custom'
-              }`}
-            >
-              {/* Card Header */}
-              <div
-                className={`p-8 text-center ${
-                  plan.highlighted ? 'bg-primary-green text-white' : 'bg-gray-50'
-                }`}
-              >
-                {plan.highlighted && (
-                  <span className="inline-block mb-4 px-4 py-1 bg-secondary-green text-text-dark rounded-full text-sm font-bold">
-                    PLUS POPULAIRE
-                  </span>
-                )}
-                <h3 className={`text-2xl font-semibold mb-2 ${plan.highlighted ? 'text-white' : 'text-text-dark'}`}>
-                  {plan.name}
-                </h3>
-                <p className={plan.highlighted ? 'text-white text-opacity-90' : 'text-gray-600'}>
-                  {plan.description}
-                </p>
-              </div>
-
-              {/* Price */}
-              <div className="p-8 text-center border-b border-gray-200">
-                <div className="text-4xl font-bold text-text-dark mb-2">
-                  {typeof plan.monthlyPrice === 'number'
-                    ? `€${isAnnual ? plan.annualPrice : plan.monthlyPrice}`
-                    : plan.monthlyPrice}
-                </div>
-                <p className="text-gray-600 text-sm">
-                  {isAnnual ? 'par an' : 'par mois'}
-                </p>
-              </div>
-
-              {/* Features */}
-              <div className="p-8">
-                <ul className="space-y-4 mb-8">
-                  {plan.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-start gap-3">
-                      <span className="text-primary-green text-xl mt-1">✓</span>
-                      <span className="text-text-dark">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                {/* CTA Button */}
-                <button
-                  className={
-                    plan.highlighted ? 'btn btn-primary w-full' : 'btn btn-border w-full'
-                  }
-                >
-                  {plan.cta}
-                </button>
-              </div>
+        <div className="pricing-grid">
+          <div className="pricing-card featured">
+            <h3 style={{ color: '#079669' }}><b>OFFRE DECOUVERTE</b></h3>
+            <p className="price-subtitle">(100% gratuit)</p>
+            <div className="price">0€</div>
+            <h2 className="price-subtitle">Testez l'efficacité BNEVO sur vos petits événements</h2>
+            <ul className="pricing-features">
+              <li><i className="ph-check-circle"></i>Planning Interactif : Créez vos événements et missions facilement.</li>
+              <li><i className="ph-check-circle"></i>Alerte Anti-Surprise : Notification dès qu'un bénévole a un imprévu.</li>
+              <li><i className="ph-check-circle"></i>Démarche Auto Mail : Démarcharge automatique de la base bénévoles de BNEVO par mail lors d'un désistement.</li>
+              <li><i className="ph-warning-circle-fill"></i>Limite de l'offre : Maximum 10 bénévoles contactés.</li>
+              <li><i className="ph-warning-circle-fill"></i>Limite de l'offre : Maximum 5 évènements par an.</li>
+            </ul>
+            <a href="#contact" className="btn btn-border">Commencer</a>
+          </div>
+          <div className="pricing-card featured">
+            <h3 style={{ color: '#079669' }}><b>OFFRE PREMIUM</b></h3>
+            <p className="price-subtitle">{' '}</p>
+            <div className="price-container">
+              <div className="price" id="premium-price" ref={premiumPriceRef}>{annual ? '199.90€' : '19.90€'}</div>
             </div>
-          ))}
-        </div>
-
-        {/* FAQ Link */}
-        <div className="text-center mt-16">
-          <p className="text-gray-600 mb-4">Des questions sur nos tarifs ?</p>
-          <a href="#faq" className="text-primary-green font-semibold hover:text-secondary-green transition">
-            Consultez notre FAQ →
-          </a>
+            <h2 className="price-subtitle">La securité absolue pour vos gros événements et une diffusion massive</h2>
+            <ul className="pricing-features">
+              <li><i className="ph-check-circle"></i>Toutes les fonctions de l'Offre Découverte</li>
+              <li><i className="ph-check-circle"></i>Evénements Illimités</li>
+              <li><i className="ph-check-circle"></i>Démarchage Illimité Mail + SMS</li>
+              <li><i className="ph-check-circle"></i>Dashboard & Statistiques : Accédez à un tableau de bord complet pour piloter et analyser les données de vos événements</li>
+            </ul>
+            <a href="#contact" className="btn btn-primary">Passer au Premium</a>
+          </div>
         </div>
       </div>
     </section>
-  );
+  )
 }
