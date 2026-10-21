@@ -1,155 +1,84 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react'
+import { asset } from '../asset'
 
-const words = ['D\'Organiser', 'De Planifier', 'De Déléguer'];
+// Phrases qui défilent dans le titre
+const phrases = [
+  "d'organiser",
+  'de gagner en efficacité',
+  'de gérer les événements',
+  'de fédérer vos équipes',
+]
+
+// Fenêtres de scroll (en % du tunnel) pendant lesquelles chaque capture est visible
+const steps = [
+  { start: 0.0, end: 0.3 },
+  { start: 0.35, end: 0.55 },
+  { start: 0.6, end: 0.8 },
+]
 
 export default function Hero() {
-  const [currentWord, setCurrentWord] = useState(0);
+  const [phraseIndex, setPhraseIndex] = useState(0)
+  const [hideText, setHideText] = useState(false)
+  const [activeImgs, setActiveImgs] = useState([false, false, false])
+  const tunnelRef = useRef(null)
+  const heroTextRef = useRef(null)
 
   useEffect(() => {
+    let timeout
     const interval = setInterval(() => {
-      setCurrentWord((prev) => (prev + 1) % words.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
+      setHideText(true)
+      timeout = setTimeout(() => {
+        setPhraseIndex((i) => (i + 1) % phrases.length)
+        setHideText(false)
+      }, 500)
+    }, 2500)
+    return () => {
+      clearInterval(interval)
+      clearTimeout(timeout)
+    }
+  }, [])
+
+  useEffect(() => {
+    const onScroll = () => {
+      const tunnel = tunnelRef.current
+      const tunnelHeight = tunnel.offsetHeight - window.innerHeight
+      let scrollPercent = (window.scrollY - tunnel.offsetTop) / tunnelHeight
+      scrollPercent = Math.max(0, Math.min(1, scrollPercent))
+
+      heroTextRef.current.style.opacity = 1 - scrollPercent * 3
+      setActiveImgs(steps.map(({ start, end }) => scrollPercent >= start && scrollPercent <= end))
+    }
+    window.addEventListener('scroll', onScroll)
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   return (
-    <section id="hero-section" style={{
-      background: '#FFFFFF',
-      minHeight: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
-      padding: '40px 20px',
-      marginTop: '80px'
-    }}>
-      <div className="container">
-        {/* Hero Content */}
-        <div style={{ textAlign: 'center', marginBottom: '60px' }}>
-          <h1 style={{
-            fontSize: 'clamp(2rem, 8vw, 3.5rem)',
-            lineHeight: '1.2',
-            marginBottom: '30px',
-            fontFamily: '"Nunito", sans-serif',
-            fontWeight: '600',
-            color: '#181818'
-          }}>
-            Retrouvez le plaisir
-            <br />
-            <span style={{
-              color: '#079669',
-              minHeight: '1.2em',
-              display: 'inline-block',
-              transition: 'opacity 0.5s ease'
-            }}>
-              {words[currentWord]}
-            </span>
-          </h1>
-          <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            gap: '15px',
-            flexWrap: 'wrap'
-          }}>
-            <a
-              href="#demo"
-              className="btn btn-primary"
-            >
-              Démonstration vidéo
-            </a>
+    <header className="hero-header" id="hero-section">
+      <div className="scroll-tunnel" ref={tunnelRef}>
+        <div className="sticky-container">
+          <div className="container hero-content-top" id="hero-text" ref={heroTextRef}>
+            <h1>
+              Retrouvez le plaisir<br />
+              <span id="dynamic-text" className={hideText ? 'hide-text' : undefined}>{phrases[phraseIndex]}</span>
+            </h1>
+            <div className="cta-group-center">
+              <a href="#demo" className="btn btn-primary">Démonstration vidéo</a>
+            </div>
+          </div>
+          <div className="iphone-main-container">
+            <img src={asset('LEAN-iPhone_Mockup_Hero_modifie.png')} className="iphone-base" alt="iPhone BNEVO" />
+            <div className={`overlay-left-img${activeImgs[0] ? ' active' : ''}`} id="img-1">
+              <img src={asset("screens/Capture d'écran 2026-04-15 052538.png")} alt="Etape 1" width="350px" height="auto" />
+            </div>
+            <div className={`overlay-right-img${activeImgs[1] ? ' active' : ''}`} id="img-2">
+              <img src={asset("screens/Capture d'écran 2026-04-15 052720.png")} alt="Etape 2" width="350px" height="auto" />
+            </div>
+            <div className={`overlay-left-img${activeImgs[2] ? ' active' : ''}`} id="img-3">
+              <img src={asset("screens/Capture d'écran 2026-04-15 052828.png")} alt="Etape 3" width="350px" height="auto" />
+            </div>
           </div>
         </div>
-
-        {/* iPhone Mockup with Overlay Images */}
-        <div style={{
-          position: 'relative',
-          height: 'clamp(400px, 80vh, 700px)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginBottom: '40px'
-        }}>
-          {/* iPhone Base */}
-          <img
-            src="../../public/assets/LEAN-iPhone_Mockup_Hero_modifie.png"
-            alt="iPhone BNEVO"
-            style={{
-              height: '100%',
-              objectFit: 'contain',
-              zIndex: 10,
-              maxWidth: '100%'
-            }}
-          />
-          
-          {/* Overlay Images - Left positions */}
-          <img
-            src="/assets/image_1_scroll.png"
-            alt="Étape 1"
-            style={{
-              position: 'absolute',
-              left: '-200px',
-              top: '25%',
-              width: '250px',
-              height: 'auto',
-              opacity: 0.8,
-              transition: 'opacity 0.3s ease'
-            }}
-            className="overlay-img"
-            onMouseEnter={(e) => e.target.style.opacity = '1'}
-            onMouseLeave={(e) => e.target.style.opacity = '0.8'}
-          />
-          <img
-            src="/assets/image_3_scroll.png"
-            alt="Étape 3"
-            style={{
-              position: 'absolute',
-              left: '-180px',
-              bottom: '20%',
-              width: '250px',
-              height: 'auto',
-              opacity: 0.8,
-              transition: 'opacity 0.3s ease'
-            }}
-            className="overlay-img"
-            onMouseEnter={(e) => e.target.style.opacity = '1'}
-            onMouseLeave={(e) => e.target.style.opacity = '0.8'}
-          />
-          
-          {/* Right positions */}
-          <img
-            src="/assets/image_2_scroll.png"
-            alt="Étape 2"
-            style={{
-              position: 'absolute',
-              right: '-200px',
-              top: '30%',
-              width: '250px',
-              height: 'auto',
-              opacity: 0.8,
-              transition: 'opacity 0.3s ease'
-            }}
-            className="overlay-img"
-            onMouseEnter={(e) => e.target.style.opacity = '1'}
-            onMouseLeave={(e) => e.target.style.opacity = '0.8'}
-          />
-          <img
-            src="/assets/image_4_scroll.png"
-            alt="Étape 4"
-            style={{
-              position: 'absolute',
-              right: '-180px',
-              bottom: '25%',
-              width: '250px',
-              height: 'auto',
-              opacity: 0.8,
-              transition: 'opacity 0.3s ease'
-            }}
-            className="overlay-img"
-            onMouseEnter={(e) => e.target.style.opacity = '1'}
-            onMouseLeave={(e) => e.target.style.opacity = '0.8'}
-          />
-        </div>
       </div>
-    </section>
-  );
+    </header>
+  )
 }

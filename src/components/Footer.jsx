@@ -1,14 +1,14 @@
-import React from 'react';
+import { asset } from '../asset'
 
 export default function Footer() {
   return (
-    <footer className="bg-text-dark text-gray-300 py-12 border-t border-gray-700">
-      <div className="container">
-        <div className="text-center">
-          <div className="text-2xl font-bold text-primary-green mb-2">BNEVO</div>
-          <p>&copy; 2026 - Fait avec ❤️ pour les associations.</p>
+    <footer>
+      <div className="container footer-content">
+        <div className="footer-logo">
+          <img src={asset('mascotte.png')} alt="Logo Benevo" style={{ width: '60px', height: 'auto' }} />
         </div>
+        <p>2026 - Fait avec ❤️ pour les associations.</p>
       </div>
     </footer>
-  );
+  )
 }

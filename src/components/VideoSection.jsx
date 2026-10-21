@@ -1,276 +1,194 @@
-import React, { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react'
+import { asset } from '../asset'
+
+const isFullscreen = () => document.fullscreenElement || document.webkitFullscreenElement
 
 export default function VideoSection() {
-  const videoRef = useRef(null);
-  const videoContainerRef = useRef(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState('0:00');
-  const [duration, setDuration] = useState('0:00');
-  const [volume, setVolume] = useState(1);
-  const [isMuted, setIsMuted] = useState(false);
+  const playerRef = useRef(null)
+  const videoRef = useRef(null)
+  const overlayRef = useRef(null)
+  const progressBarRef = useRef(null)
+  const restartRef = useRef(null)
+  const hideControlsTimeout = useRef(null)
+
+  const [playIcon, setPlayIcon] = useState('ph-fill ph-play')
+  const [volumeIcon, setVolumeIcon] = useState('ph-bold ph-speaker-high')
+  const [controlsHidden, setControlsHidden] = useState(false)
 
   const togglePlay = () => {
-    if (videoRef.current) {
-      if (isPlaying) {
-        videoRef.current.pause();
-      } else {
-        videoRef.current.play();
-      }
-      setIsPlaying(!isPlaying);
+    const video = videoRef.current
+    const overlay = overlayRef.current
+    if (video.paused) {
+      video.play()
+      setPlayIcon('ph-pause-fill')
+      overlay.style.opacity = '0'
+      setTimeout(() => { if (!video.paused) overlay.style.visibility = 'hidden' }, 300)
+    } else {
+      video.pause()
+      setPlayIcon('ph-play-fill')
+      overlay.style.visibility = 'visible'
+      overlay.style.opacity = '1'
     }
-  };
+  }
+
+  const updateVolumeIcon = () => {
+    const video = videoRef.current
+    setVolumeIcon(video.muted || video.volume === 0 ? 'ph-speaker-slash-fill' : 'ph-speaker-high-fill')
+  }
+
+  const handleVolume = (e) => {
+    const video = videoRef.current
+    video.volume = e.target.value
+    video.muted = Number(e.target.value) === 0
+    updateVolumeIcon()
+  }
+
+  const handleMute = () => {
+    videoRef.current.muted = !videoRef.current.muted
+    updateVolumeIcon()
+  }
 
   const handleTimeUpdate = () => {
-    if (videoRef.current) {
-      const current = formatTime(videoRef.current.currentTime);
-      const dur = formatTime(videoRef.current.duration);
-      setCurrentTime(current);
-      setDuration(dur);
-    }
-  };
+    const video = videoRef.current
+    progressBarRef.current.style.width = `${(video.currentTime / video.duration) * 100}%`
+  }
 
-  const formatTime = (time) => {
-    if (!time) return '0:00';
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-  };
+  const handleProgressClick = (e) => {
+    const video = videoRef.current
+    video.currentTime = (e.nativeEvent.offsetX / e.currentTarget.clientWidth) * video.duration
+  }
 
-  const toggleMute = () => {
-    if (videoRef.current) {
-      videoRef.current.muted = !isMuted;
-      setIsMuted(!isMuted);
+  const handleFullscreen = () => {
+    const player = playerRef.current
+    if (!isFullscreen()) {
+      // Plein écran sur le conteneur pour garder les contrôles personnalisés
+      if (player.requestFullscreen) player.requestFullscreen()
+      else if (player.webkitRequestFullscreen) player.webkitRequestFullscreen()
+      // Désactive l'overlay central pour ne pas bloquer les clics en bas
+      overlayRef.current.style.pointerEvents = 'none'
+    } else {
+      if (document.exitFullscreen) document.exitFullscreen()
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen()
+      overlayRef.current.style.pointerEvents = 'auto'
     }
-  };
+  }
 
-  const handleVolumeChange = (e) => {
-    const newVolume = parseFloat(e.target.value);
-    setVolume(newVolume);
-    if (videoRef.current) {
-      videoRef.current.volume = newVolume;
-    }
-  };
+  const handleRestart = () => {
+    videoRef.current.currentTime = 0
+    if (videoRef.current.paused) togglePlay()
 
-  const restart = () => {
-    if (videoRef.current) {
-      videoRef.current.currentTime = 0;
-      videoRef.current.play();
-      setIsPlaying(true);
-    }
-  };
+    restartRef.current.style.transform = 'rotate(-360deg)'
+    setTimeout(() => { restartRef.current.style.transform = 'rotate(0deg)' }, 400)
+  }
 
-  const toggleFullscreen = () => {
-    if (videoContainerRef.current) {
-      videoContainerRef.current.requestFullscreen?.().catch(() => {});
+  // Masquage automatique des contrôles, uniquement en plein écran
+  const handleControlsVisibility = () => {
+    setControlsHidden(false)
+    document.body.style.cursor = 'default'
+    clearTimeout(hideControlsTimeout.current)
+
+    if (isFullscreen()) {
+      hideControlsTimeout.current = setTimeout(() => {
+        if (!videoRef.current.paused) {
+          setControlsHidden(true)
+          document.body.style.cursor = 'none'
+        }
+      }, 2000)
     }
-  };
+  }
+
+  useEffect(() => {
+    const onFullscreenChange = () => {
+      if (!document.fullscreenElement) {
+        setControlsHidden(false)
+        document.body.style.cursor = 'default'
+      }
+    }
+    document.addEventListener('fullscreenchange', onFullscreenChange)
+    return () => {
+      document.removeEventListener('fullscreenchange', onFullscreenChange)
+      clearTimeout(hideControlsTimeout.current)
+    }
+  }, [])
 
   return (
-    <section id="demo" style={{
-      background: '#FFFFFF',
-      padding: '80px 20px'
-    }}>
-      <div className="container">
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
-          gap: '60px',
-          alignItems: 'center'
-        }}>
-          {/* Text Content */}
-          <div>
-            <h2 style={{
-              fontSize: '2.5rem',
-              fontFamily: '"Nunito", sans-serif',
-              fontWeight: '600',
-              color: '#181818',
-              marginBottom: '20px'
-            }}>
-              Voyez la simplicité en action
-            </h2>
-            <p style={{
-              fontSize: '1.1rem',
-              color: '#666',
-              lineHeight: '1.8',
-              marginBottom: '30px'
-            }}>
-              Découvrez comment nous transformons des heures de gestion administrative en
-              quelques clics sereins. Nous remettons l'humain au centre, et la technique au placard.
-            </p>
-            <button className="btn btn-primary">
-              Demander une démo
-            </button>
-          </div>
-
-          {/* Video Player */}
-          <div ref={videoContainerRef} style={{
-            position: 'relative',
-            background: 'black',
-            borderRadius: '12px',
-            overflow: 'hidden',
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)'
-          }}>
-            <video
-              ref={videoRef}
-              src="/assets/LEAN-Publicité 1.mp4"
-              style={{
-                width: '100%',
-                height: 'auto',
-                display: 'block'
-              }}
-              onTimeUpdate={handleTimeUpdate}
-              onLoadedMetadata={handleTimeUpdate}
-            />
-
-            {/* Play Button Overlay */}
-            {!isPlaying && (
-              <div
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  background: 'rgba(0, 0, 0, 0.4)',
-                  cursor: 'pointer',
-                  transition: 'background 0.3s ease'
-                }}
+    <section id="demo" className="section-video">
+      <div className="container video-container-flex">
+        <div className="video-text">
+          <h2>Voyez la simplicité en action</h2>
+          <p>Découvrez comment nous transformons des heures de gestion administrative en quelques clics sereins.
+            Nous remettons l'humain au centre, et la technique au placard.</p>
+        </div>
+        <div className="video-wrapper">
+          <div
+            className="custom-video-container"
+            id="videoPlayer"
+            ref={playerRef}
+            onMouseMove={handleControlsVisibility}
+            onMouseDown={handleControlsVisibility}
+          >
+            <div className="custom-video-container" id="videoPlayer" role="region" aria-label="Lecteur vidéo Bnevo">
+              <video
+                id="mainVideo"
+                ref={videoRef}
+                className="video-element"
+                preload="metadata"
+                playsInline
+                webkit-playsinline="true"
+                muted
                 onClick={togglePlay}
-                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0, 0, 0, 0.6)'}
-                onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(0, 0, 0, 0.4)'}
+                onTimeUpdate={handleTimeUpdate}
               >
-                <div style={{
-                  fontSize: '60px',
-                  color: 'white',
-                  textShadow: '0 2px 10px rgba(0, 0, 0, 0.5)'
-                }}>
-                  ▶
-                </div>
+                <source src={asset('LEAN-Publicité 1.mp4')} type="video/mp4" />
+              </video>
+
+              <div className="video-overlay" id="videoOverlay" ref={overlayRef} aria-hidden="true" onClick={togglePlay}>
+                <div className="play-button-large">▶</div>
               </div>
-            )}
 
-            {/* Video Controls */}
-            <div style={{
-              position: 'absolute',
-              bottom: 0,
-              left: 0,
-              right: 0,
-              background: 'linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent)',
-              padding: '20px',
-              color: 'white'
-            }}>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                fontSize: '14px'
-              }}>
-                <button
-                  onClick={togglePlay}
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.2)',
-                    border: 'none',
-                    color: 'white',
-                    padding: '8px 12px',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    transition: 'background 0.2s'
-                  }}
-                  onMouseEnter={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.3)'}
-                  onMouseLeave={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.2)'}
-                  title="Play/Pause"
-                >
-                  {isPlaying ? '⏸' : '▶'}
-                </button>
+              <div className={`video-controls${controlsHidden ? ' controls-hidden' : ''}`} role="group" aria-label="Contrôles de lecture">
+                <div className="controls-main">
 
-                <button
-                  onClick={restart}
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.2)',
-                    border: 'none',
-                    color: 'white',
-                    padding: '8px 12px',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    transition: 'background 0.2s'
-                  }}
-                  onMouseEnter={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.3)'}
-                  onMouseLeave={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.2)'}
-                  title="Restart"
-                >
-                  ↻
-                </button>
-
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}>
-                  <button
-                    onClick={toggleMute}
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.2)',
-                      border: 'none',
-                      color: 'white',
-                      padding: '8px 12px',
-                      borderRadius: '6px',
-                      cursor: 'pointer',
-                      transition: 'background 0.2s'
-                    }}
-                    onMouseEnter={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.3)'}
-                    onMouseLeave={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.2)'}
-                    title={isMuted ? 'Unmute' : 'Mute'}
-                  >
-                    {isMuted ? '🔇' : '🔊'}
+                  <button className="control-btn" id="fullScreenBtn" aria-label="Plein écran" onClick={handleFullscreen}>
+                    <i className="ph-bold ph-corners-out"></i>
                   </button>
-                  <input
-                    type="range"
-                    min="0"
-                    max="1"
-                    step="0.1"
-                    value={volume}
-                    onChange={handleVolumeChange}
-                    style={{
-                      width: '80px',
-                      height: '4px',
-                      cursor: 'pointer'
-                    }}
-                  />
+
+                  <button className="control-btn" id="playPauseBtn" aria-label="Play/Pause" onClick={togglePlay}>
+                    <i className={playIcon}></i>
+                  </button>
+
+                  <div className="progress-area" id="progressArea" onClick={handleProgressClick}>
+                    <div className="progress-bar-container">
+                      <div className="progress-bar" id="progressBar" ref={progressBarRef}></div>
+                    </div>
+                  </div>
+
+                  <button className="control-btn" id="restartBtn" ref={restartRef} title="Relancer du début" onClick={handleRestart}>
+                    <i className="ph-bold ph-arrow-counter-clockwise"></i>
+                  </button>
+
+                  <div className="volume-container">
+                    <button className="control-btn" id="muteBtn" aria-label="Muter" onClick={handleMute}>
+                      <i className={volumeIcon}></i>
+                    </button>
+                    <input
+                      type="range"
+                      className="volume-slider"
+                      id="volumeSlider"
+                      min="0"
+                      max="1"
+                      step="0.1"
+                      defaultValue="1"
+                      onInput={handleVolume}
+                    />
+                  </div>
+
                 </div>
-
-                <span style={{
-                  marginLeft: 'auto',
-                  whiteSpace: 'nowrap',
-                  fontSize: '12px'
-                }}>
-                  {currentTime} / {duration}
-                </span>
-
-                <button
-                  onClick={toggleFullscreen}
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.2)',
-                    border: 'none',
-                    color: 'white',
-                    padding: '8px 12px',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    transition: 'background 0.2s'
-                  }}
-                  onMouseEnter={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.3)'}
-                  onMouseLeave={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.2)'}
-                  title="Fullscreen"
-                >
-                  ⛶
-                </button>
               </div>
             </div>
           </div>
         </div>
       </div>
     </section>
-  );
+  )
 }
