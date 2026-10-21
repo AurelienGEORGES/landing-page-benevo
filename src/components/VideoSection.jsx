@@ -127,7 +127,7 @@ export default function VideoSection() {
             onMouseMove={handleControlsVisibility}
             onMouseDown={handleControlsVisibility}
           >
-            <div className="custom-video-container" id="videoPlayer" role="region" aria-label="Lecteur vidéo Bnevo">
+            <div className="custom-video-container" id="videoPlayer" role="region" aria-label="Lecteur vidéo benevo">
               <video
                 id="mainVideo"
                 ref={videoRef}

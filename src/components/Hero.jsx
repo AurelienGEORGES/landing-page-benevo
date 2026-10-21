@@ -66,7 +66,7 @@ export default function Hero() {
             </div>
           </div>
           <div className="iphone-main-container">
-            <img src={asset('LEAN-iPhone_Mockup_Hero_modifie.png')} className="iphone-base" alt="iPhone BNEVO" />
+            <img src={asset('LEAN-iPhone_Mockup_Hero_modifie.png')} className="iphone-base" alt="iPhone benevo" />
             <div className={`overlay-left-img${activeImgs[0] ? ' active' : ''}`} id="img-1">
               <img src={asset("screens/Capture d'écran 2026-04-15 052538.png")} alt="Etape 1" width="350px" height="auto" />
             </div>

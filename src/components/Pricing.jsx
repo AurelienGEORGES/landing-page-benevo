@@ -34,11 +34,11 @@ export default function Pricing() {
             <h3 style={{ color: '#079669' }}><b>OFFRE DECOUVERTE</b></h3>
             <p className="price-subtitle">(100% gratuit)</p>
             <div className="price">0€</div>
-            <h2 className="price-subtitle">Testez l'efficacité BNEVO sur vos petits événements</h2>
+            <h2 className="price-subtitle">Testez l'efficacité benevo sur vos petits événements</h2>
             <ul className="pricing-features">
               <li><i className="ph-check-circle"></i>Planning Interactif : Créez vos événements et missions facilement.</li>
               <li><i className="ph-check-circle"></i>Alerte Anti-Surprise : Notification dès qu'un bénévole a un imprévu.</li>
-              <li><i className="ph-check-circle"></i>Démarche Auto Mail : Démarcharge automatique de la base bénévoles de BNEVO par mail lors d'un désistement.</li>
+              <li><i className="ph-check-circle"></i>Démarche Auto Mail : Démarcharge automatique de la base bénévoles de benevo par mail lors d'un désistement.</li>
               <li><i className="ph-warning-circle-fill"></i>Limite de l'offre : Maximum 10 bénévoles contactés.</li>
               <li><i className="ph-warning-circle-fill"></i>Limite de l'offre : Maximum 5 évènements par an.</li>
             </ul>
